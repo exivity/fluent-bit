@@ -6,3 +6,22 @@ set(src
 FLB_PLUGIN(out_pgsql "${src}" "")
 target_include_directories(flb-plugin-out_pgsql PRIVATE ${PostgreSQL_INCLUDE_DIRS})
 target_link_libraries(flb-plugin-out_pgsql -lpq)
+
+# Include and link libpq on Windows.
+if (FLB_SYSTEM_WINDOWS)
+  # find PG include
+  if(MSVC)
+    # have to specify full path because AppVeyor install several versions of PG and none of them is in the PATH
+    execute_process(COMMAND "c:/Program Files/PostgreSQL/13/bin/pg_config.exe" --includedir OUTPUT_VARIABLE PG_INCLUDE)
+    execute_process(COMMAND "c:/Program Files/PostgreSQL/13/bin/pg_config.exe" --libdir OUTPUT_VARIABLE PG_LIB)
+  else()
+    execute_process(COMMAND pg_config --includedir OUTPUT_VARIABLE PG_INCLUDE)
+    execute_process(COMMAND pg_config --libdir OUTPUT_VARIABLE PG_LIB)
+  endif()
+  string(STRIP ${PG_INCLUDE} PG_INCLUDE)
+  string(STRIP ${PG_LIB} PG_LIB)
+  message(STATUS "PG include is in ${PG_INCLUDE}, PG lib is ${PG_LIB}")
+  # Include directories 
+  include_directories(${PG_INCLUDE})
+  link_directories(${PG_LIB})
+endif()
