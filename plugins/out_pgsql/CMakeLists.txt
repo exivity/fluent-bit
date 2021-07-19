@@ -4,8 +4,6 @@ set(src
   )
 
 FLB_PLUGIN(out_pgsql "${src}" "")
-target_include_directories(flb-plugin-out_pgsql PRIVATE ${PostgreSQL_INCLUDE_DIRS})
-target_link_libraries(flb-plugin-out_pgsql -lpq)
 
 # Include and link libpq on Windows.
 if (FLB_SYSTEM_WINDOWS)
@@ -18,5 +16,7 @@ if (FLB_SYSTEM_WINDOWS)
   # Include directories 
   target_include_directories(flb-plugin-out_pgsql ${PG_INCLUDE})
   target_link_directories(flb-plugin-out_pgsql ${PG_LIB})
-  target_link_libraries(flb-plugin-out_pgsql libpq.lib)
+else()
+  target_include_directories(flb-plugin-out_pgsql PRIVATE ${PostgreSQL_INCLUDE_DIRS})
+  target_link_libraries(flb-plugin-out_pgsql -lpq)
 endif()
