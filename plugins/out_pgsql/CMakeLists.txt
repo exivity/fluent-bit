@@ -14,7 +14,6 @@ if (FLB_SYSTEM_WINDOWS)
   message(STATUS "PG include is in ${PG_INCLUDE}, PG lib is ${PG_LIB}")
   # Include directories 
   target_include_directories(flb-plugin-out_pgsql PRIVATE ${PG_INCLUDE})
-  target_link_directories(flb-plugin-out_pgsql PRIVATE ${PG_LIB})
   target_link_libraries(flb-plugin-out_pgsql ${PG_LIB}/libpq.lib)
 else()
   target_include_directories(flb-plugin-out_pgsql PRIVATE ${PostgreSQL_INCLUDE_DIRS})
