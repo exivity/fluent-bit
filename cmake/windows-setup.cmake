@@ -88,6 +88,11 @@ set(FLB_FILTER_RECORD_MODIFIER Yes)
 set(FLB_FILTER_REWRITE_TAG    Yes)
 set(FLB_FILTER_GEOIP2         Yes)
 
+# Enable PostgreSQL plugin only on x64 target
+if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
+  set(FLB_OUT_PGSQL           Yes)
+endif()
+
 # Search bison and flex executables
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
   find_package(FLEX)
