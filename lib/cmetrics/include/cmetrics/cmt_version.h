@@ -26,11 +26,11 @@
 
 /* Chunk I/O Version */
 #define CMT_VERSION_MAJOR   0
-#define CMT_VERSION_MINOR   1
-#define CMT_VERSION_PATCH   5
+#define CMT_VERSION_MINOR   2
+#define CMT_VERSION_PATCH   1
 #define CMT_VERSION         (CMT_VERSION_MAJOR * 10000 \
                              CMT_VERSION_MINOR * 100   \
                              CMT_VERSION_PATCH)
-#define CMT_VERSION_STR     "0.1.5"
+#define CMT_VERSION_STR     "0.2.1"
 
 #endif
