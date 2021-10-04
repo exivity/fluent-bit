@@ -2,11 +2,11 @@ cd build
 
 if ( "x64" -eq $env:PLATFORM ) {
     $OPENSSL_DIR = "C:\OpenSSL-v111-Win64"
-    $POSTGRESQL_ROOT = ""
+    $POSTGRESQL_ROOT = "C:\Program Files\PostgreSQL\9.6\bin"
 }
 else {
     $OPENSSL_DIR = "C:\OpenSSL-v111-Win32"
-    $POSTGRESQL_ROOT = ""
+    $POSTGRESQL_ROOT = "C:\Program Files (x86)\PostgreSQL\9.6\bin"
 }
 
 
