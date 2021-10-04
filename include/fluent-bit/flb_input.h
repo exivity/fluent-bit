@@ -39,6 +39,7 @@
 #include <fluent-bit/flb_metrics.h>
 #endif
 
+#include <cmetrics/cmetrics.h>
 #include <monkey/mk_core.h>
 #include <msgpack.h>
 
@@ -157,6 +158,9 @@ struct flb_input_instance {
     /* By default all input instances are 'routable' */
     int routable;
 
+    /* flag to pause input when storage is full */
+    int storage_pause_on_chunks_overlimit;
+
     /*
      * Input network info:
      *
@@ -210,6 +214,14 @@ struct flb_input_instance {
     int mem_buf_status;
 
     /*
+     * Define the buffer status:
+     *
+     * - FLB_INPUT_RUNNING -> can append more data
+     * - FLB_INPUT_PAUSED  -> cannot append data
+     */
+    int storage_buf_status;
+
+    /*
      * Optional data passed to the plugin, this info is useful when
      * running Fluent Bit in library mode and the target plugin needs
      * some specific data from it caller.
@@ -242,8 +254,18 @@ struct flb_input_instance {
     struct mk_list coros;                /* list of input coros         */
 
 #ifdef FLB_HAVE_METRICS
+
+    /* old metrics API */
     struct flb_metrics *metrics;         /* metrics                    */
 #endif
+
+    /*
+     * CMetrics
+     * --------
+     */
+    struct cmt *cmt;                     /* parent context              */
+    struct cmt_counter *cmt_bytes;       /* metric: input_bytes_total   */
+    struct cmt_counter *cmt_records;     /* metric: input_records_total */
 
     /*
      * Indexes for generated chunks: simple hash tables that keeps the latest
@@ -482,6 +504,9 @@ static inline void flb_input_return(struct flb_coro *coro) {
 static inline int flb_input_buf_paused(struct flb_input_instance *i)
 {
     if (i->mem_buf_status == FLB_INPUT_PAUSED) {
+        return FLB_TRUE;
+    }
+    if (i->storage_buf_status == FLB_INPUT_PAUSED) {
         return FLB_TRUE;
     }
 

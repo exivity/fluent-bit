@@ -26,12 +26,14 @@
 #include <fluent-bit/flb_parser.h>
 #include <fluent-bit/flb_macros.h>
 #include <fluent-bit/flb_sqldb.h>
+#include <fluent-bit/flb_metrics.h>
 #ifdef FLB_HAVE_REGEX
 #include <fluent-bit/flb_regex.h>
 #endif
 #ifdef FLB_HAVE_PARSER
 #include <fluent-bit/multiline/flb_ml.h>
 #endif
+
 
 /* Metrics */
 #ifdef FLB_HAVE_METRICS
@@ -81,7 +83,9 @@ struct flb_tail_config {
     flb_sds_t path_key;        /* key name of file path        */
     flb_sds_t key;             /* key for unstructured record  */
     int   skip_long_lines;     /* skip long lines              */
+    int   skip_empty_lines;    /* skip empty lines (off)       */
     int   exit_on_eof;         /* exit fluent-bit on EOF, test */
+
 #ifdef FLB_HAVE_INOTIFY
     int   inotify_watcher;     /* enable/disable inotify monitor */
 #endif
@@ -130,6 +134,11 @@ struct flb_tail_config {
 
     /* Plugin input instance */
     struct flb_input_instance *ins;
+
+    /* Metrics */
+    struct cmt_counter *cmt_files_opened;
+    struct cmt_counter *cmt_files_closed;
+    struct cmt_counter *cmt_files_rotated;
 
     struct flb_config *config;
 };
